@@ -1,30 +1,83 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
-const router = express.Router();
 
-// POST /auth/register
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email et mot de passe requis.' });
-    }
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: 'Identifiants invalides.' });
-    }
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      return res.status(401).json({ message: 'Identifiants invalides.' });
-    }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (err) {
-    console.error('Erreur /auth/login:', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
-  }
-});
+const express = require('express');
+const userController = require('../controller/userController');
+const router = express.Router();
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Crée un nouvel utilisateur
+ *     tags:
+ *       - Authentification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@email.com
+ *               password:
+ *                 type: string
+ *                 example: motdepasse
+ *               name:
+ *                 type: string
+ *                 example: Jean Dupont
+ *               phone:
+ *                 type: string
+ *                 example: '0601020304'
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Données manquantes ou utilisateur déjà existant
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/register', userController.register);
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Authentifie un utilisateur et retourne un token JWT
+ *     tags:
+ *       - Authentification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@email.com
+ *               password:
+ *                 type: string
+ *                 example: motdepasse
+ *     responses:
+ *       200:
+ *         description: Authentification réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Email et mot de passe requis
+ *       401:
+ *         description: Identifiants invalides
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/login', userController.login);
 
 module.exports = router;
