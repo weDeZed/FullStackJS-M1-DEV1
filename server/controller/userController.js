@@ -8,8 +8,8 @@ exports.getAllUsers = async (req, res) => {
     const users = await User.find({}, '-password');
     res.json(users);
   } catch (error) {
-    console.error('Erreur getAllUsers:', error.message);
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error('erreur getAllUsers:', error.message);
+    res.status(500).json({ error: 'erreur serveur' });
   }
 };
 
@@ -17,11 +17,11 @@ exports.getAllUsers = async (req, res) => {
     try {
       const { email, password, name, phone } = req.body;
       if (!email || !password) {
-        return res.status(400).json({ message: 'Email et mot de passe requis.' });
+        return res.status(400).json({ message: 'il faut un mail et un mdp' });
       }
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
+        return res.status(400).json({ message: 'l email est déjà utilisé' });
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({ email, password: hashedPassword, name, phone });
@@ -31,7 +31,7 @@ exports.getAllUsers = async (req, res) => {
       res.status(201).json(userObj);
     } catch (err) {
       console.error('Erreur /auth/register:', err);
-      res.status(500).json({ message: 'Erreur serveur.' });
+      res.status(500).json({ message: 'erreur serveur' });
     }
   };
 
@@ -39,15 +39,15 @@ exports.getAllUsers = async (req, res) => {
     try {
       const { email, password } = req.body;
       if (!email || !password) {
-        return res.status(400).json({ message: 'Email et mot de passe requis.' });
+        return res.status(400).json({ message: 'email et mot de passe requis' });
       }
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(401).json({ message: 'Identifiants invalides.' });
+        return res.status(401).json({ message: 'Identifiants pas valides' });
       }
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
-        return res.status(401).json({ message: 'Identifiants invalides.' });
+        return res.status(401).json({ message: 'Identifiants pas valides' });
       }
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.json({ token });

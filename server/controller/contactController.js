@@ -6,7 +6,7 @@ exports.getContacts = async (req, res) => {
     res.json(contacts);
   } catch (err) {
     console.error('Erreur getContacts:', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
+    res.status(500).json({ message: 'erreur serveur' });
   }
 };
 
@@ -14,7 +14,7 @@ exports.createContact = async (req, res) => {
   try {
     const { firstName, lastName, phone} = req.body;
     if (!firstName || !lastName || !phone) {
-      return res.status(400).json({ message: 'Champs requis manquants.' });
+      return res.status(400).json({ message: 'Champs manquants' });
     }
 
     const actualUserId = req.user.userId;
@@ -28,7 +28,7 @@ exports.createContact = async (req, res) => {
 
   } catch (err) {
     console.error('Erreur createContact:', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
+    res.status(500).json({ message: 'erreur serveur' });
   }
 };
 
@@ -42,12 +42,12 @@ exports.updateContact = async (req, res) => {
       { new: true }
     );
     if (!contact) {
-      return res.status(404).json({ message: 'Contact non trouvé.' });
+      return res.status(404).json({ message: 'Contact non trouvé' });
     }
     res.json(contact);
   } catch (err) {
     console.error('Erreur updateContact:', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
+    res.status(500).json({ message: 'erreur serveur' });
   }
 };
 
@@ -56,11 +56,11 @@ exports.deleteContact = async (req, res) => {
     const { id } = req.params;
     const contact = await Contact.findOneAndDelete({ _id: id, user: req.userId });
     if (!contact) {
-      return res.status(404).json({ message: 'Contact non trouvé.' });
+      return res.status(404).json({ message: 'contact non trouvé' });
     }
-    res.json({ message: 'Contact supprimé.' });
+    res.json({ message: 'contact supprimé' });
   } catch (err) {
     console.error('Erreur deleteContact:', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
+    res.status(500).json({ message: 'erreur serveur' });
   }
 };
