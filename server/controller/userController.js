@@ -1,4 +1,7 @@
 const User = require("../model/user");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -7,12 +10,8 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     console.error('Erreur getAllUsers:', error.message);
     res.status(500).json({ error: 'Erreur serveur' });
-  const bcrypt = require('bcrypt');
-  const jwt = require('jsonwebtoken');
   }
 };
-
-
 
   exports.register = async (req, res) => {
     try {

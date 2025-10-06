@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('./db/connexion.js');
 const userRouter = require('./routes/userRoute.js');
+const contactRoute = require('./routes/contactRoute.js');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const authRoute = require('./routes/authRoute');
@@ -39,6 +40,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/auth', authRoute);
+app.use('/contacts', contactRoute);
 app.use('/', userRouter);
 
 app.listen(port, () => {
