@@ -1,14 +1,12 @@
 const User = require("../model/user");
 
-exports.registerUser = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
-    const { name } = req.body;
-    const newUser = new User({ name });
-    await newUser.save();
-    res.status(201).json({ message: "User crée" });
+    const users = await User.find({}, '-password');
+    res.json(users);
   } catch (error) {
-    console.error("Erreur registerUser:", error.message);
-    res.status(500).json({ error: "Erreur serveur" });
+    console.error('Erreur getAllUsers:', error.message);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
