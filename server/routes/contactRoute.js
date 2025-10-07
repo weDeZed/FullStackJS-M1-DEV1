@@ -23,7 +23,6 @@ const router = express.Router();
  *                 $ref: '#/components/schemas/Contact'
  */
 router.get('/', requireAuth, contactController.getContacts);
-
 /**
  * @swagger
  * /contacts:
@@ -57,7 +56,6 @@ router.get('/', requireAuth, contactController.getContacts);
  *         description: Champs requis manquants
  */
 router.post('/', requireAuth, contactController.createContact);
-
 /**
  * @swagger
  * /contacts/{id}:
@@ -90,7 +88,6 @@ router.post('/', requireAuth, contactController.createContact);
  *         description: Contact non trouvé
  */
 router.patch('/:id', requireAuth, contactController.updateContact);
-
 /**
  * @swagger
  * /contacts/{id}:

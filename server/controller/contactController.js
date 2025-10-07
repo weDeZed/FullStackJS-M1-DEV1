@@ -34,27 +34,34 @@ exports.createContact = async (req, res) => {
 
 exports.updateContact = async (req, res) => {
   try {
-    const { id } = req.params;
-    const update = req.body;
+    const contactId = req.params.id;
+    const userId = req.user.userId;
+    const { firstName, lastName, phone } = req.body;
+
+    const updateFields = {};
+    if (firstName !== undefined) updateFields.firstName = firstName;
+    if (lastName !== undefined) updateFields.lastName = lastName;
+    if (phone !== undefined) updateFields.phone = phone;
+
     const contact = await Contact.findOneAndUpdate(
-      { _id: id, user: req.userId },
-      update,
+      { _id: contactId, user: userId },
+      { $set: updateFields },
       { new: true }
     );
+
     if (!contact) {
       return res.status(404).json({ message: 'Contact non trouvé' });
     }
     res.json(contact);
-  } catch (err) {
-    console.error('Erreur updateContact:', err);
-    res.status(500).json({ message: 'erreur serveur' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.deleteContact = async (req, res) => {
   try {
     const { id } = req.params;
-    const contact = await Contact.findOneAndDelete({ _id: id, user: req.userId });
+    const contact = await Contact.findOneAndDelete({ _id: id, user: req.user.userId });
     if (!contact) {
       return res.status(404).json({ message: 'contact non trouvé' });
     }
