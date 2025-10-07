@@ -6,12 +6,17 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const authRoute = require('./routes/authRoute');
 const path = require('path');
+const cors = require('cors');
+
+
 require('dotenv').config({
   path: path.join(__dirname, '.env'),
 });
 db();
 
 const app = express();
+app.use(cors());
+
 const port = 3000;
 
 const swaggerOptions = {

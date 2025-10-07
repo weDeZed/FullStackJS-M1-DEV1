@@ -2,7 +2,7 @@ const Contact = require('../model/contact');
 
 exports.getContacts = async (req, res) => {
   try {
-    const contacts = await Contact.find({ user: req.userId });
+    const contacts = await Contact.find({ user: req.user.userId });
     res.json(contacts);
   } catch (err) {
     console.error('Erreur getContacts:', err);

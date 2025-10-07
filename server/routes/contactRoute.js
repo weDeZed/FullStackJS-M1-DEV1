@@ -22,7 +22,7 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Contact'
  */
-router.get('/contacts', requireAuth, contactController.getContacts);
+router.get('/', requireAuth, contactController.getContacts);
 
 /**
  * @swagger
@@ -56,7 +56,7 @@ router.get('/contacts', requireAuth, contactController.getContacts);
  *       400:
  *         description: Champs requis manquants
  */
-router.post('/contacts', requireAuth, contactController.createContact);
+router.post('/', requireAuth, contactController.createContact);
 
 /**
  * @swagger
