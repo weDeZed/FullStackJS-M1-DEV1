@@ -24,6 +24,8 @@ app.use('/auth', authRoute);
 app.use('/contacts', contactRoute);
 app.use('/', userRouter);
 
-app.listen(port, () => {
-  console.log("Good", port);
+// Port Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`API listening on http://0.0.0.0:${PORT}`);
 });
