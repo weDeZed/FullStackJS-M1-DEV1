@@ -3,7 +3,6 @@ const userCrtl = require('../controller/userController');
 const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
-
 /**
  * @swagger
  * /users:
@@ -26,5 +25,4 @@ const router = express.Router();
  *         description: Non autorisé
  */
 router.get('/users', requireAuth, userCrtl.getAllUsers);
-
 module.exports = router;
