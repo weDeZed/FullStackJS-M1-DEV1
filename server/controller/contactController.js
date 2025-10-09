@@ -1,56 +1,31 @@
-const Contact = require('../model/contact');
-
-exports.getContacts = async (req, res) => {
-  try {
-    const contacts = await Contact.find({ user: req.user.userId });
-    res.json(contacts);
-  } catch (err) {
-    console.error('Erreur getContacts:', err);
-    res.status(500).json({ message: 'erreur serveur' });
-  }
-};
+const contactService = require('../service/contactService');
 
 exports.createContact = async (req, res) => {
   try {
-    const { firstName, lastName, phone} = req.body;
-    if (!firstName || !lastName || !phone) {
-      return res.status(400).json({ message: 'Champs manquants' });
-    }
-
-    const actualUserId = req.user.userId;
-    const contact = new Contact({ firstName, lastName, phone, user: actualUserId});
-
-    console.log(contact);
-
-    await contact.save();
+    const contact = await contactService.createContact(req.user.userId, req.body);
     res.status(201).json(contact);
+  } catch (error) {
+    if (error.message === 'le contact existe déja') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
 
-
-  } catch (err) {
-    console.error('Erreur createContact:', err);
-    res.status(500).json({ message: 'erreur serveur' });
+exports.getContacts = async (req, res) => {
+  try {
+    const contacts = await contactService.getContacts(req.user.userId);
+    res.json(contacts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateContact = async (req, res) => {
   try {
-    const contactId = req.params.id;
-    const userId = req.user.userId;
-    const { firstName, lastName, phone } = req.body;
-
-    const updateFields = {};
-    if (firstName !== undefined) updateFields.firstName = firstName;
-    if (lastName !== undefined) updateFields.lastName = lastName;
-    if (phone !== undefined) updateFields.phone = phone;
-
-    const contact = await Contact.findOneAndUpdate(
-      { _id: contactId, user: userId },
-      { $set: updateFields },
-      { new: true }
-    );
-
+    const contact = await contactService.updateContact(req.user.userId, req.params.id, req.body);
     if (!contact) {
-      return res.status(404).json({ message: 'Contact non trouvé' });
+      return res.status(404).json({ message: 'le contact existe déja' });
     }
     res.json(contact);
   } catch (error) {
@@ -60,14 +35,12 @@ exports.updateContact = async (req, res) => {
 
 exports.deleteContact = async (req, res) => {
   try {
-    const { id } = req.params;
-    const contact = await Contact.findOneAndDelete({ _id: id, user: req.user.userId });
+    const contact = await contactService.deleteContact(req.user.userId, req.params.id);
     if (!contact) {
-      return res.status(404).json({ message: 'contact non trouvé' });
+      return res.status(404).json({ message: 'le contact existe déja' });
     }
     res.json({ message: 'contact supprimé' });
-  } catch (err) {
-    console.error('Erreur deleteContact:', err);
-    res.status(500).json({ message: 'erreur serveur' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
